@@ -1,0 +1,53 @@
+- hosts: haproxy_master
+  roles:
+    - role: ansible-role-keepalived
+      keepalived_global:
+        router_id: "TEST"
+      keepalived_vrrp_sync_groups:
+        haproxy:
+          instances:
+            - external
+      keepalived_vrrp_scripts:
+        check_haproxy:
+          check_script: "killall -0 haproxy"
+          interval: 2
+          weight: 2
+      keepalived_vrrp_instances:
+        external:
+          interface: "eth0"
+          state: MASTER
+          virtual_router_id: 10
+          priority: 100
+          advert_int: 1
+          auth_pass: "password"
+          vips:
+            - "{{ ansible_default_ipv4.address }} dev eth0 label eth0:0"
+          track_scripts:
+            - check_haproxy
+
+- hosts: haproxy_backup
+  roles:
+    - role: ansible-role-keepalived
+      keepalived_global:
+        router_id: "TEST"
+      keepalived_vrrp_sync_groups:
+        haproxy:
+          instances:
+            - external
+      keepalived_vrrp_scripts:
+        check_haproxy:
+          check_script: "killall -0 haproxy"
+          interval: 2
+          weight: 2
+      keepalived_vrrp_instances:
+        external:
+          interface: "eth0"
+          state: BACKUP
+          virtual_router_id: 10    # The same as the MASTER
+          priority: 50
+          advert_int: 1
+          auth_pass: "password"
+          vips:
+            - "{{ ansible_default_ipv4.address }} dev eth0 label eth0:0"
+          track_scripts:
+            - check_haproxy

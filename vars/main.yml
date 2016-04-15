@@ -1,0 +1,46 @@
+---
+# vars file for keepalived
+
+# keepalived_global:
+#   router_id: "DEVEL"
+#
+# keepalived_vrrp_sync_groups:
+#   haproxy:
+#     instances:
+#       - external
+#       - internal
+#     notify_script: /etc/keepalived/haproxy_notify.sh
+#     notify_master:
+#     notify_backup:
+#     notify_fault:
+#
+# keepalived_vrrp_scripts:
+#   check_haproxy:
+#     check_script: "killall -0 haproxy"
+#     interval: 10
+#     weight: 2
+#     fail: 2
+#     rise: 4
+#
+# keepalived_vrrp_instances:
+#   external:
+#     interface: "eth0"
+#     state: MASTER
+#     virtual_router_id: 10
+#     priority: 100
+#     advert_int: 1
+#     auth_pass: "password"
+#     vips:
+#       - "{{keepalived_external_vip_cidr}} dev eth0 label eth0:0"
+#     track_scripts:
+#       - check_haproxy
+#   internal:
+#     interface: "eth1"
+#     state: MASTER
+#     virtual_router_id: 11
+#     priority: 100
+#     auth_pass: "password"
+#     vips:
+#       - "{{keepalived_internal_vip_cidr}} dev eth1 label eth1:0"
+#     track_scripts:
+#       - check_haproxy

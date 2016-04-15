@@ -1,0 +1,69 @@
+! Configuration File for keepalived
+global_defs {
+    router_id {{ keepalived_global.router_id | default("DEVEL") }}
+}
+
+{% for name, sync_group in keepalived_vrrp_sync_groups.iteritems() %}
+vrrp_sync_group {{ name }} {
+    group {
+{% for instance in sync_group.instances %}
+      {{ instance }}
+{% endfor %}
+    }
+{% if sync_group.notify_script is defined %}
+    notify "{{ sync_group.notify_script }}"
+{% endif %}
+{% if sync_group.notify_master is defined %}
+    notify_master "{{ sync_group.notify_master }}"
+{% endif %}
+{% if sync_group.notify_backup is defined %}
+    notify_backup "{{ sync_group.notify_backup }}"
+{% endif %}
+{% if sync_group.notify_fault is defined %}
+    notify_fault "{{ sync_group.notify_fault }}"
+{% endif %}
+}
+{% endfor %}
+
+{% if keepalived_vrrp_scripts is defined %}
+{% for name, details in keepalived_vrrp_scripts.iteritems() %}
+vrrp_script {{ name }} {        # Requires keepalived-1.1.13
+    script "{{ details.check_script }}"
+    interval {{ details.interval | default(5) }}   # checking every "{{ details.interval | default(5) }}" seconds (default: 5 seconds)
+    weight {{ details.weight | default(2) }}       # add {{ details.weight | default(2) }} points of prio if OK (default: 2)
+    fall {{ details.fall | default(3) }}           # require "{{ details.fall | default(3) }}" failures for KO (default: 3)
+    rise {{ details.rise | default(6) }}           # require "{{ details.rise | default(6) }}" successes for OK (default: 6)
+}
+{% endfor %}
+{% endif %}
+
+{% for name, instance in keepalived_vrrp_instances.iteritems() %}
+vrrp_instance {{ name }} {
+    interface {{ instance.interface }}
+    state {{ instance.state }}
+    virtual_router_id {{ instance.virtual_router_id }}
+    priority {{ instance.priority }}
+{% if instance.advert_int is defined %}
+    advert_int {{ instance.advert_int }}
+{% endif %}
+{% if instance.auth_pass is defined %}
+    authentication {
+      auth_type PASS
+      auth_pass {{ instance.auth_pass }}
+    }
+{% endif %}
+    virtual_ipaddress {
+{% for vip in instance.vips %}
+      {{ vip }}
+{% endfor %}
+    }
+{% if instance.track_scripts is defined %}
+    track_script {
+{% for track_script in instance.track_scripts %}
+      {{ track_script }}
+{% endfor %}
+    }
+{% endif %}
+
+}
+{% endfor %}
