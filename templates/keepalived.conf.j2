@@ -48,7 +48,7 @@ vrrp_instance {{ name }} {
 {% endif %}
 {% if instance.auth_pass is defined %}
     authentication {
-      auth_type PASS
+      auth_type {{ instance.auth_type | default("PASS") }}
       auth_pass {{ instance.auth_pass }}
     }
 {% endif %}
