@@ -64,6 +64,13 @@ vrrp_instance {{ name }} {
 {% endfor %}
     }
 {% endif %}
+{% if instance.track_interfaces is defined %}
+    track_interface {
+{% for track_interface in instance.track_interfaces %}
+      {{ track_interface }}
+{% endfor %}
+    }
+{% endif %}
 
 {% if instance.raw_config is defined %}
 {% for line in instance.raw_config %}
