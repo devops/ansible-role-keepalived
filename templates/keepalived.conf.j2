@@ -65,5 +65,11 @@ vrrp_instance {{ name }} {
     }
 {% endif %}
 
+{% if instance.raw_config is defined %}
+{% for line in instance.raw_config %}
+      {{ line }}
+{% endfor %}
+{% endif %}
+
 }
 {% endfor %}

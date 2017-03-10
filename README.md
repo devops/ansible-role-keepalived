@@ -50,6 +50,8 @@ None.
                  - "{{ ansible_default_ipv4.address }}"
                track_scripts:
                  - check_haproxy
+               raw_config:
+                 - 'mcast_src_ip @IP'
 
 ## Author Information
 
