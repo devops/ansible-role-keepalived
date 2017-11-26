@@ -1,7 +1,7 @@
 ---
 # defaults file for keepalived
 
-keepalived_global: []
-keepalived_vrrp_sync_groups: []
-keepalived_vrrp_scripts: []
-keepalived_vrrp_instances: []
+keepalived_global: {}
+keepalived_vrrp_sync_groups: {}
+keepalived_vrrp_scripts: {}
+keepalived_vrrp_instances: {}

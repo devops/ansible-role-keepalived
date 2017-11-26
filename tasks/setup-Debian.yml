@@ -1,0 +1,8 @@
+---
+# tasks file for Debian
+
+- name: Install keepalived.
+  apt: name=keepalived state=present
+
+- name: Ensure keepalived is started and enabled on boot.
+  service: name=keepalived enabled=yes
